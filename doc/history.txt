@@ -1,5 +1,9 @@
 Version 5.0.5                    (12.11.04)
 -------------------------------------------
+   ù Atari 8-bit text files: lines ended by the 8-bit's EOL, $9B, are
+     read as lines and saved with $9B again, when the file has no CR
+     or LF in it ($9B is a cent sign on the ST, so an ST text is never
+     taken for one).  The info line shows 8.  Slaapliedje 10/28/2026
    ù Add syntax for SCEleton (JAnE, GSExec).
      Update syntax for the new UDO version.
      Printer driver for Canon BJ-200. Gerhard Stoll 07/18/2010

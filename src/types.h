@@ -43,7 +43,7 @@ typedef char FILENAME[MAX_NAME_LEN];
 /* various enums
  *************************************************/
  
-typedef enum {lns_tos, lns_unix, lns_apple, lns_binmode} LINEENDING;
+typedef enum {lns_tos, lns_unix, lns_apple, lns_binmode, lns_atari8} LINEENDING;
 
 typedef enum {Atari, Latin, Mac, PC, LaTeX, HTML, ASCII} UMLAUTENCODING;
 

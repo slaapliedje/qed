@@ -955,6 +955,9 @@ void head_out(WINDOWP window, TEXTP t_ptr)
                 case lns_apple :
                     head_str[2] = 'A';
                     break;
+                case lns_atari8 :
+                    head_str[2] = '8';
+                    break;
                 default:
                     head_str[2] = '?';
             }

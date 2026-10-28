@@ -63,6 +63,26 @@ short load(TEXTP t_ptr, bool verbose)
 	return(antw);
 }
 
+/*
+ * An Atari 8-bit text: lines ended by its EOL, $9B, and no CR or LF in
+ * the first buffer.  $9B is an ordinary character on the ST (a cent
+ * sign), so a file with a CR or LF in it is never taken for one.
+ */
+static bool is_atari8(const char *buf, long len)
+{
+	bool	eol = FALSE;
+	long	i;
+
+	for (i = 0; i < len; i++)
+	{
+		if (buf[i] == 0x0D || buf[i] == 0x0A)
+			return FALSE;
+		if (buf[i] == (char)0x9B)
+			eol = TRUE;
+	}
+	return eol;
+}
+
 short load_from_fd(short fd, char *name, RINGP t, bool verbose, bool *null_byte, long size)
 {
 	short		antw;
@@ -106,6 +126,8 @@ short load_from_fd(short fd, char *name, RINGP t, bool verbose, bool *null_byte,
 
 	/* Einlesen */
 	l = Fread(fd, BUFFERSIZE, buffer);
+	if (t->ending != lns_binmode && is_atari8(buffer, l))
+		t->ending = lns_atari8;
 
 	n = 0;
 	new_line = FALSE;
@@ -136,6 +158,11 @@ short load_from_fd(short fd, char *name, RINGP t, bool verbose, bool *null_byte,
 						new_line = TRUE;				/* -> Unix */
 						t->ending = lns_unix;
 					}
+				}
+				else if (buffer[p] == (char)0x9B && t->ending == lns_atari8)
+				{											/* Atari 8-bit EOL */
+					new_line = TRUE;
+					p++;
 				}
 				else if (n >= t->max_line_len)	/* šberl„nge */
 				{
@@ -421,6 +448,10 @@ short save_to_fd(short fd, char *name, RINGP t, bool verbose)
 			break;
 		case lns_apple :
 			strcpy(end_str, "\r");
+			e_len = 1;
+			break;
+		case lns_atari8 :
+			strcpy(end_str, "\x9B");
 			e_len = 1;
 			break;
 		default:
